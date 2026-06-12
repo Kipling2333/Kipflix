@@ -19,7 +19,7 @@ interface AuthCtx {
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   toggleFavorite: (movieId: string) => Promise<boolean>;
   recordWatch: (movieId: string) => Promise<void>;
   clearHistory: () => Promise<void>;
@@ -67,8 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(user);
   }, []);
 
-  const logout = useCallback(() => {
-    signOut(auth);
+  const logout = useCallback(async () => {
+    await signOut(auth);
     setToken(null);
     setUser(null);
   }, []);
