@@ -27,6 +27,7 @@ export default function Admin() {
   const [editing, setEditing] = useState<Movie | null>(null);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...empty });
+  const [muxId, setMuxId] = useState("");
   const [saving, setSaving] = useState(false);
 
   const stats = useMemo(() => {
@@ -37,13 +38,28 @@ export default function Admin() {
 
   const maxViews = stats.top[0]?.views || 1;
 
+  const applyMuxId = (id: string) => {
+    const clean = id.trim();
+    setMuxId(clean);
+    if (clean) {
+      setForm((f) => ({
+        ...f,
+        videoUrl: `https://stream.mux.com/${clean}.m3u8`,
+        thumbnailUrl: `https://image.mux.com/${clean}/thumbnail.jpg`,
+      }));
+    }
+  };
+
   const openNew = () => {
     setEditing(null);
     setForm({ ...empty });
+    setMuxId("");
     setOpen(true);
   };
+
   const openEdit = (m: Movie) => {
     setEditing(m);
+    setMuxId("");
     setForm({
       title: m.title,
       description: m.description,
@@ -80,7 +96,7 @@ export default function Admin() {
   };
 
   const remove = async (m: Movie) => {
-    if (!confirm(`Delete “${m.title}”? This cannot be undone.`)) return;
+    if (!confirm(`Delete "${m.title}"? This cannot be undone.`)) return;
     try {
       await api.deleteMovie(token, m.id);
       await refresh();
@@ -214,6 +230,24 @@ export default function Admin() {
               </button>
             </div>
 
+            {/* MUX PLAYBACK ID */}
+            <div className="mb-5 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-red-400">Mux Video</p>
+              <Field label="Mux Playback ID (auto-fills video & thumbnail)">
+                <input
+                  value={muxId}
+                  onChange={(e) => applyMuxId(e.target.value)}
+                  className={inputCls}
+                  placeholder="Paste your Mux Playback ID here..."
+                />
+              </Field>
+              {muxId && (
+                <p className="mt-2 text-xs text-green-400">
+                  ✓ Video and thumbnail URLs auto-filled from Mux
+                </p>
+              )}
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Title" className="sm:col-span-2">
                 <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputCls} placeholder="Movie title" />
@@ -236,14 +270,14 @@ export default function Admin() {
                   <span className="text-xs text-zinc-500">Used for the generated poster</span>
                 </div>
               </Field>
-              <Field label="Thumbnail / Key-art URL (optional)" className="sm:col-span-2">
-                <input value={form.thumbnailUrl} onChange={(e) => setForm({ ...form, thumbnailUrl: e.target.value })} className={inputCls} placeholder="https://..." />
+              <Field label="Thumbnail URL (auto-filled from Mux)" className="sm:col-span-2">
+                <input value={form.thumbnailUrl} onChange={(e) => setForm({ ...form, thumbnailUrl: e.target.value })} className={inputCls} placeholder="https://image.mux.com/..." />
               </Field>
-              <Field label="Video URL" className="sm:col-span-2">
-                <input value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} className={inputCls} placeholder="https://...mp4" />
+              <Field label="Video URL (auto-filled from Mux)" className="sm:col-span-2">
+                <input value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} className={inputCls} placeholder="https://stream.mux.com/...m3u8" />
               </Field>
-              <Field label="Trailer URL" className="sm:col-span-2">
-                <input value={form.trailerUrl} onChange={(e) => setForm({ ...form, trailerUrl: e.target.value })} className={inputCls} placeholder="https://...mp4" />
+              <Field label="Trailer URL (YouTube embed)" className="sm:col-span-2">
+                <input value={form.trailerUrl} onChange={(e) => setForm({ ...form, trailerUrl: e.target.value })} className={inputCls} placeholder="https://www.youtube.com/embed/..." />
               </Field>
               <Field label="Genres" className="sm:col-span-2">
                 <div className="flex flex-wrap gap-2">
