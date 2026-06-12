@@ -45,7 +45,7 @@ export default function Admin() {
       setForm((f) => ({
         ...f,
         videoUrl: `https://stream.mux.com/${clean}.m3u8`,
-        thumbnailUrl: `https://image.mux.com/${clean}/thumbnail.jpg`,
+        thumbnailUrl: `hhttps://ibb.co/GfkyntQ5`,
       }));
     }
   };
