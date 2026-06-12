@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -32,10 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const loggingOut = useRef(false);
 
   useEffect(() => {
     seedIfNeeded();
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (loggingOut.current) return;
       if (firebaseUser) {
         try {
           const t = await firebaseUser.getIdToken();
@@ -68,9 +71,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    loggingOut.current = true;
     await signOut(auth);
     setToken(null);
     setUser(null);
+    loggingOut.current = false;
   }, []);
 
   const toggleFavorite = useCallback(
