@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../lib/firebase";
 import { api, seedIfNeeded } from "../lib/api";
 import type { User } from "../lib/types";
 
@@ -25,7 +27,6 @@ interface AuthCtx {
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
-const TOKEN_KEY = "kipflix.token";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -34,37 +35,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     seedIfNeeded();
-    const t = localStorage.getItem(TOKEN_KEY);
-    if (t) {
-      api
-        .getUser(t)
-        .then((u) => {
-          setUser(u);
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const t = await firebaseUser.getIdToken();
+          const u = await api.getUser(t);
           setToken(t);
-        })
-        .catch(() => localStorage.removeItem(TOKEN_KEY))
-        .finally(() => setLoading(false));
-    } else {
+          setUser(u);
+        } catch {
+          setToken(null);
+          setUser(null);
+        }
+      } else {
+        setToken(null);
+        setUser(null);
+      }
       setLoading(false);
-    }
+    });
+    return () => unsub();
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     const { token, user } = await api.login(email, password);
-    localStorage.setItem(TOKEN_KEY, token);
     setToken(token);
     setUser(user);
   }, []);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
     const { token, user } = await api.register(name, email, password);
-    localStorage.setItem(TOKEN_KEY, token);
     setToken(token);
     setUser(user);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
+    signOut(auth);
     setToken(null);
     setUser(null);
   }, []);
