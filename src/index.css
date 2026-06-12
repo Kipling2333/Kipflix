@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: #08080b;
+  color: #f4f4f5;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hide scrollbars on horizontal movie rows */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-fit: none;
+  scrollbar-width: none;
+}
+
+/* App scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d11;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a32;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e11d2e;
+}
+
+@keyframes kf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: kf-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes kf-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade {
+  animation: kf-fade 0.5s ease both;
+}
+
+@keyframes kf-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-scale-in {
+  animation: kf-scale-in 0.25s ease both;
+}
+
+@keyframes kf-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.shimmer {
+  background: linear-gradient(90deg, #131318 0%, #1d1d24 50%, #131318 100%);
+  background-size: 800px 100%;
+  animation: kf-shimmer 1.4s infinite linear;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
