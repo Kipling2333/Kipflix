@@ -18,4 +18,21 @@ export const SEED_MOVIES: Movie[] = [
     featured: true,
     createdAt: new Date().toISOString(),
   },
+  {
+    id: "she-knows-my-secret",
+    title: "She Knows My Secret",
+    description:
+      "She Knows My Secret is a gripping emotional drama centered around a man who appears to have the perfect life on the outside, but hides a dark secret that could destroy everything he has built.",
+    genre: ["Drama", "Romance", "Thriller"],
+    year: 2026,
+    rating: 8.0,
+    duration: 101,
+    thumbnailUrl: "https://i.ibb.co/QttKfRn/photo-2026-05-23-23-02-44.jpg",
+    accent: "#e11d2e",
+    videoUrl: "https://stream.mux.com/PxTR6J2772jiwyJqAAZGdrX637q7CEUXS0068Lr4UeQM",
+    trailerUrl: "https://www.youtube.com/embed/f2r_q99S8I0",
+    views: 0,
+    featured: true,
+    createdAt: new Date().toISOString(),
+  },
 ];
